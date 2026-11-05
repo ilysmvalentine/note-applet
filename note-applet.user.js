@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Molly's Note Builder for SimplePractice
 // @namespace    molly-note-builder
-// @version      1.2.1
+// @version      1.3.0
 // @description  Preset-based clinical note builder with symptom assessment, interventions, homework, they/them wording, and six themes. No AI or saved drafts.
 // @match        https://secure.simplepractice.com/*
 // @run-at       document-idle
@@ -13,7 +13,7 @@
 // ==/UserScript==
 
 /*
- * Molly's Note Builder 1.2.1 — single-file Tampermonkey edition.
+ * Molly's Note Builder 1.3.0 — single-file Tampermonkey edition.
  * No Xcode, bundler, API key, or server is needed to install this file.
  * Select actual findings and review the entire note before insertion.
  * No AI, external dependencies, runtime network calls, telemetry, or note storage.
@@ -605,11 +605,139 @@
   modules.MollyAdapter = { targets, isTarget, capture, placement };
 })();
 
+// ---- celebration.js ----
+/* Optional success feedback. This module never receives or reads note contents. */
+(() => {
+  'use strict';
+  const messages = [
+    "You're killing it!! 😘",
+    "Great job! ⭐️",
+    "Nice! 🥳",
+    "Excellent 😎",
+    "NOICE 🙌",
+    "She's hot AND she's a great therapist?! 😍",
+    "PASSED ✅",
+    "One step closer to free time! Keep going!! ✨",
+    "You're doing amazing! 💖",
+    "Beautiful notes, beautiful therapist 💅",
+    "YOU GO GIRL!! 🫶",
+    "Bravo!! 👏👏",
+    "Go Molly!! 💕",
+    "You got this baby 😘",
+    "Lookin' good! 👍✨",
+    "SESSION CLEARED 🙌",
+    "SHE DID IT 🤩",
+    "Best therapist ever!! 🏆💋"
+  ];
+  const colors = ['#a88bd1', '#ef91ba', '#f4c75c', '#6ec8b8', '#8ebbea', '#d8b7ec'];
+  const holdDuration = 2500, fadeDuration = 350;
+  let active = null, previous = -1;
+  const css = `
+    :host{all:initial;pointer-events:none!important}
+    .stage{position:fixed;inset:0;margin:0;padding:0;border:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;background:transparent;overflow:hidden;pointer-events:none!important;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .stage::backdrop{background:transparent;pointer-events:none}
+    canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+    .message{position:absolute;left:50%;top:50%;z-index:2;width:max-content;max-width:min(680px,calc(100vw - 36px));margin:0;padding:0;border:0;background:transparent;text-align:center;font-size:clamp(26px,4.2vw,36px);font-weight:650;line-height:1.4;text-wrap:balance;overflow-wrap:break-word;color:var(--celebration-ink);opacity:0;transform:translate(-50%,-50%) scale(.94);transition:opacity 350ms ease,transform 350ms ease;pointer-events:none}
+    .visible .message{opacity:1;transform:translate(-50%,-50%) scale(1);animation:note-applet-pop 480ms cubic-bezier(.2,.85,.25,1) both}
+    @keyframes note-applet-pop{0%{transform:translate(-50%,-50%) scale(.78) rotate(-2deg)}65%{transform:translate(-50%,-50%) scale(1.035) rotate(.4deg)}100%{transform:translate(-50%,-50%) scale(1) rotate(0)}}
+    @media(prefers-reduced-motion:reduce){.message{transition:none}.visible .message{animation:none}}
+  `;
+  function clear() { active?.dispose(); }
+  function inkForPage() {
+    // Inspect surface colors only, never text or other record information.
+    for (const node of [document.body, document.documentElement]) {
+      const match = getComputedStyle(node).backgroundColor.match(/^rgba?\(([^)]+)\)$/);
+      if (!match) continue;
+      const channels = match[1].split(',').map(Number);
+      if (channels.length > 3 && channels[3] < .95) continue;
+      const luminance = channels.slice(0, 3).map(x => { x /= 255; return x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; });
+      return .2126 * luminance[0] + .7152 * luminance[1] + .0722 * luminance[2] < .3 ? '#faf1ff' : '#392d4a';
+    }
+    return '#392d4a';
+  }
+  function show() {
+    clear();
+    const host = document.createElement('div'); host.setAttribute('data-note-applet-celebration', '');
+    host.style.cssText = 'position:fixed!important;inset:0!important;pointer-events:none!important;z-index:2147483647!important;';
+    const abortSetup = () => { host.remove(); if (active?.dispose === abortSetup) active = null; };
+    active = { dispose: abortSetup };
+    const root = host.attachShadow({ mode: 'closed' }), stage = document.createElement('div'); stage.className = 'stage';
+    stage.style.setProperty('--celebration-ink', inkForPage());
+    const canvas = document.createElement('canvas'); canvas.setAttribute('aria-hidden', 'true');
+    const message = document.createElement('p'); message.className = 'message'; message.setAttribute('role', 'status'); message.setAttribute('aria-live', 'polite'); message.setAttribute('aria-atomic', 'true');
+    stage.append(canvas, message); root.append(stage);
+    try { const sheet = new CSSStyleSheet(); sheet.replaceSync(css); root.adoptedStyleSheets = [sheet]; }
+    catch { const style = document.createElement('style'); style.textContent = css; root.prepend(style); }
+    document.documentElement.append(host);
+    // A manual popover can appear above EHR dialogs without making the page inert
+    // or moving focus. Unsupported engines use the fixed, pointer-transparent host.
+    if (typeof stage.showPopover === 'function') {
+      stage.setAttribute('popover', 'manual');
+      try { stage.showPopover(); } catch { stage.removeAttribute('popover'); }
+    }
+    const context = canvas.getContext('2d'), reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let width = 0, height = 0, particles = [], frame = 0, fadeTimer = 0, resetTimer = 0, alive = true;
+    function resize() {
+      const oldWidth = width, oldHeight = height;
+      width = window.innerWidth; height = window.innerHeight;
+      if (!context) return;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio); context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      if (oldWidth && oldHeight) particles.forEach(p => { p.x *= width / oldWidth; p.y *= height / oldHeight; });
+    }
+    function dispose() {
+      if (!alive) return;
+      alive = false; cancelAnimationFrame(frame); clearTimeout(fadeTimer); clearTimeout(resetTimer); particles = [];
+      window.removeEventListener('resize', resize); window.removeEventListener('pagehide', dispose); document.removeEventListener('visibilitychange', visibility); document.removeEventListener('keydown', keydown);
+      if (stage.hasAttribute('popover')) { try { stage.hidePopover(); } catch {} }
+      message.textContent = ''; host.remove(); if (active?.dispose === dispose) active = null;
+    }
+    function visibility() { if (document.hidden) dispose(); }
+    function keydown(e) { if (e.key === 'Escape') dispose(); }
+    function burst() {
+      if (!context || reducedMotion.matches) return;
+      const count = width < 500 ? 115 : 170;
+      particles = Array.from({ length: count }, (_, i) => {
+        const side = i % 2 ? 1 : -1;
+        return { x: width / 2 + side * Math.min(width * .15, 100), y: height / 2 + 16, vx: side * (1 + Math.random() * 5.5), vy: -5.5 - Math.random() * 9.5, gravity: .18 + Math.random() * .09, drag: .985 + Math.random() * .009, rotation: Math.random() * Math.PI * 2, spin: (Math.random() - .5) * .22, sway: Math.random() * Math.PI * 2, size: 5 + Math.random() * 5, color: colors[i % colors.length], round: i % 7 === 0 };
+      });
+      const started = performance.now(); let lastTime = started;
+      function draw(now) {
+        if (!alive) return;
+        const age = now - started, dt = Math.min((now - lastTime) / (1000 / 60), 2); lastTime = now; context.clearRect(0, 0, width, height);
+        const opacity = Math.max(0, Math.min(1, (holdDuration + fadeDuration - age) / fadeDuration));
+        for (const p of particles) {
+          p.vx *= Math.pow(p.drag, dt); p.vy += p.gravity * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rotation += p.spin * dt; p.sway += .07 * dt;
+          if (p.y > height + 20) continue;
+          context.save(); context.globalAlpha = opacity; context.translate(p.x + Math.sin(p.sway) * 5, p.y); context.rotate(p.rotation); context.fillStyle = p.color;
+          if (p.round) { context.beginPath(); context.arc(0, 0, p.size * .35, 0, Math.PI * 2); context.fill(); }
+          else { context.scale(1, .3 + Math.abs(Math.cos(p.sway)) * .7); context.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2); }
+          context.restore();
+        }
+        if (age < holdDuration + fadeDuration) frame = requestAnimationFrame(draw);
+        else context.clearRect(0, 0, width, height);
+      }
+      frame = requestAnimationFrame(draw);
+    }
+    let choice = Math.floor(Math.random() * (messages.length - (previous < 0 ? 0 : 1)));
+    if (previous >= 0 && choice >= previous) choice++; previous = choice;
+    active = { dispose }; resize();
+    window.addEventListener('resize', resize); window.addEventListener('pagehide', dispose); document.addEventListener('visibilitychange', visibility); document.addEventListener('keydown', keydown);
+    frame = requestAnimationFrame(() => {
+      if (!alive) return;
+      message.textContent = messages[choice]; stage.classList.add('visible'); burst();
+      fadeTimer = setTimeout(() => stage.classList.remove('visible'), holdDuration);
+      resetTimer = setTimeout(dispose, holdDuration + fadeDuration + 50);
+    });
+  }
+  modules.MollyCelebration = { show, clear };
+})();
+
 // ---- end modules ----
 function start() {
   if (!document.body || document.documentElement.hasAttribute('data-molly-userscript-version')) return;
-  document.documentElement.setAttribute('data-molly-userscript-version', '1.2.1');
-  const A = modules.MollyAdapter, UI = modules.MollyUI;
+  document.documentElement.setAttribute('data-molly-userscript-version', '1.3.0');
+  const A = modules.MollyAdapter, UI = modules.MollyUI, Celebration = modules.MollyCelebration;
   let current = null, lastField = null, path = location.pathname + location.search + location.hash, queued = false;
   const buttons = new Map();
   function open(field) {
@@ -619,14 +747,15 @@ function start() {
     if (!field) return { ok: false, message: 'Click inside the editable “Clinical Actions, Intervention, and Methods” field, then try again. If there is no builder button, use a fictional note to report the field’s label.' };
     let session;
     try { session = A.capture(field); } catch (e) { return { ok: false, message: e.message }; }
+    Celebration.clear();
     const host = document.createElement('div'); host.setAttribute('data-molly-builder', ''); document.documentElement.append(host);
     const shadow = host.attachShadow({ mode: 'closed' });
-    current = UI.mount(shadow, { hasSnippet: session.hasSnippet, onInsert: (note, mode) => session.insert(note, mode), onClose: () => { current = null; session = null; host.remove(); } });
+    current = UI.mount(shadow, { hasSnippet: session.hasSnippet, onInsert: (note, mode) => session.insert(note, mode), onClose: inserted => { current = null; session = null; host.remove(); if (inserted) { try { Celebration.show(); } catch { Celebration.clear(); } } } });
     return { ok: true };
   }
   function scan() {
     queued = false;
-    if (location.pathname + location.search + location.hash !== path) { current?.close(); lastField = null; path = location.pathname + location.search + location.hash; }
+    if (location.pathname + location.search + location.hash !== path) { current?.close(); Celebration.clear(); lastField = null; path = location.pathname + location.search + location.hash; }
     const found = A.targets();
     for (const [field, button] of buttons) if (!field.isConnected || !found.includes(field)) { button.remove(); buttons.delete(field); }
     for (const field of found) {
@@ -640,7 +769,7 @@ function start() {
   const observer = new MutationObserver(() => { if (!queued) { queued = true; setTimeout(scan, 200); } });
   observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-label','aria-labelledby','readonly','disabled','contenteditable'] });
   document.addEventListener('focusin', e => { if (A.isTarget(e.target)) lastField = e.target; });
-  window.addEventListener('pagehide', () => { current?.close(); lastField = null; });
+  window.addEventListener('pagehide', () => { current?.close(); Celebration.clear(); lastField = null; });
   // This API receives a fixed menu title and callback only, never note text.
   if (typeof GM_registerMenuCommand === 'function') {
     GM_registerMenuCommand('Open Molly’s Note Builder', () => {
