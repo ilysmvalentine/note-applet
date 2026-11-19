@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Molly's Note Builder for SimplePractice
 // @namespace    molly-note-builder
-// @version      1.4.0
+// @version      1.4.1
 // @description  Preset-based clinical note builder with symptom assessment, interventions, homework, they/them wording, and six themes. No AI or saved drafts.
 // @match        https://secure.simplepractice.com/*
 // @run-at       document-idle
@@ -13,7 +13,7 @@
 // ==/UserScript==
 
 /*
- * Molly's Note Builder 1.4.0 — single-file Tampermonkey edition.
+ * Molly's Note Builder 1.4.1 — single-file Tampermonkey edition.
  * No Xcode, bundler, API key, or server is needed to install this file.
  * Select actual findings and review the entire note before insertion.
  * No AI, external dependencies, runtime network calls, telemetry, or note storage.
@@ -376,7 +376,7 @@
     const followups = [...d.followups, clean(d.customFollowup)].filter(Boolean);
     if (followups.length) paragraphs.push('The counselor will follow up with the client regarding ' + sentence(list(followups)) + (clean(d.frequencyPlan) ? ' Follow-up plan: ' + sentence(d.frequencyPlan) : ''));
     else if (clean(d.frequencyPlan)) paragraphs.push('Follow-up plan: ' + sentence(d.frequencyPlan));
-    return paragraphs.map(clean).filter(Boolean).join(' ');
+    return paragraphs.map(clean).filter(Boolean).join('\n\n');
   }
   function snippetRange(value) {
     const starts = ['The counselor used', 'The client responded', 'The client participated', 'The client stated that their takeaway', 'Between sessions, the client will practice/review', 'The counselor will follow up'];
@@ -396,7 +396,7 @@
       if (!range) throw new Error('The General snippet could not be identified safely. Choose append or paste manually.');
       return original.slice(0, range.start) + narrative + original.slice(range.end);
     }
-    return original.trimEnd() + (original.trim() ? ' ' : '') + narrative;
+    return original.trimEnd() + (original.trim() ? '\n\n' : '') + narrative;
   }
   function canComplete(d) { return Boolean(d.reviewed && (d.manualOverride || !validate(d).length) && assemble(d).trim()); }
   modules.MollyCore = { initial, blankGoal, validate, assemble, snippetRange, merge, clean, canComplete };
@@ -853,7 +853,7 @@
 // ---- end modules ----
 function start() {
   if (!document.body || document.documentElement.hasAttribute('data-molly-userscript-version')) return;
-  document.documentElement.setAttribute('data-molly-userscript-version', '1.4.0');
+  document.documentElement.setAttribute('data-molly-userscript-version', '1.4.1');
   const A = modules.MollyAdapter, UI = modules.MollyUI, Celebration = modules.MollyCelebration;
   let current = null, lastField = null, path = location.pathname + location.search + location.hash, queued = false;
   const buttons = new Map();
