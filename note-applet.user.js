@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Molly's Note Builder for SimplePractice
 // @namespace    molly-note-builder
-// @version      1.3.0
+// @version      1.4.0
 // @description  Preset-based clinical note builder with symptom assessment, interventions, homework, they/them wording, and six themes. No AI or saved drafts.
 // @match        https://secure.simplepractice.com/*
 // @run-at       document-idle
@@ -13,7 +13,7 @@
 // ==/UserScript==
 
 /*
- * Molly's Note Builder 1.3.0 — single-file Tampermonkey edition.
+ * Molly's Note Builder 1.4.0 — single-file Tampermonkey edition.
  * No Xcode, bundler, API key, or server is needed to install this file.
  * Select actual findings and review the entire note before insertion.
  * No AI, external dependencies, runtime network calls, telemetry, or note storage.
@@ -43,7 +43,15 @@
         ['acceptance', 'Acceptance and willingness', 'explored willingness to experience difficult internal states while pursuing valued activities'],
         ['committed', 'Committed action planning', 'collaboratively planned a manageable action aligned with the client’s stated values'],
         ['present', 'Present-moment awareness', 'guided present-moment awareness and nonjudgmental noticing'],
-        ['avoidance', 'Examine experiential avoidance', 'examined how experiential avoidance affects symptoms and daily functioning']
+        ['avoidance', 'Examine experiential avoidance', 'examined how experiential avoidance affects symptoms and daily functioning'],
+        ["leaves", "Leaves on a stream", "guided a leaves-on-a-stream exercise to practice allowing thoughts to come and go"],
+        ["observer", "Observing self / self-as-context", "guided exploration of the observing self to practice perspective-taking toward internal experiences"],
+        ["choice", "Choice point model", "reviewed choice points between avoidance and values-directed action"],
+        ["thankmind", "Thank your mind", "practiced thanking the mind as a way to step back from judgmental thoughts"],
+        ["language", "Acceptance-based language", "modeled acceptance-based language to address internal struggle and self-judgment"],
+        ["metaphor", "ACT metaphors", "used an ACT metaphor to explore relating differently to difficult thoughts"],
+        ["rehearse", "Rehearse values-based responses", "rehearsed values-based responses to an anticipated stressful situation"],
+        ["barriers", "Problem-solve barriers to valued action", "identified barriers to values-directed activity and collaboratively considered workable responses"]
       ], true),
       modality('cbt', 'Cognitive Behavioral Therapy (CBT)', [
         ['thoughts', 'Identify thought patterns', 'helped identify automatic thoughts and thinking patterns associated with distress'],
@@ -52,7 +60,15 @@
         ['record', 'Review a thought record', 'reviewed a thought record to examine links among thoughts, feelings, and behavior'],
         ['problem', 'Structured problem-solving', 'guided structured problem-solving and identification of manageable next steps'],
         ['rehearsal', 'Communication rehearsal', 'rehearsed assertive communication and boundary-setting strategies'],
-        ['psychoeducation', 'Cognitive-behavioral psychoeducation', 'provided psychoeducation about interactions among thoughts, emotions, and behavior']
+        ['psychoeducation', 'Cognitive-behavioral psychoeducation', 'provided psychoeducation about interactions among thoughts, emotions, and behavior'],
+        ["experiment", "Behavioral experiments", "planned a behavioral experiment to examine a prediction associated with distress"],
+        ["beliefs", "Explore core beliefs", "explored core beliefs and their relationship to current symptoms and self-evaluation"],
+        ["avoidance", "Examine avoidance cycles", "examined avoidance patterns and their relationship to ongoing symptoms"],
+        ["coping", "Build a coping toolbox", "collaboratively identified cognitive and behavioral coping strategies for identified triggers"],
+        ["relapse", "Relapse prevention planning", "reviewed warning signs and cognitive and behavioral strategies for relapse prevention"],
+        ["discovery", "Guided discovery", "used guided discovery to explore alternative interpretations of a current stressor"],
+        ["anticipatory", "Rehearsal for anticipatory anxiety", "rehearsed coping responses to anticipated anxiety-provoking situations"],
+        ["smart", "Set specific behavioral goals", "collaboratively defined specific, measurable, achievable steps for behavioral change"]
       ], true),
       modality('emdr', 'Eye Movement Desensitization and Reprocessing (EMDR)', [
         ['history', 'Phase 1 · History and planning', 'reviewed relevant history and treatment planning for EMDR'],
@@ -62,7 +78,15 @@
         ['installation', 'Phase 5 · Installation', 'facilitated installation of an adaptive cognition related to the identified target'],
         ['body', 'Phase 6 · Body scan', 'guided a body scan to assess residual activation'],
         ['closure', 'Phase 7 · Closure', 'used closure and stabilization strategies and reviewed between-session monitoring'],
-        ['reevaluation', 'Phase 8 · Re-evaluation', 're-evaluated the prior target and current symptoms to inform further treatment']
+        ['reevaluation', 'Phase 8 · Re-evaluation', 're-evaluated the prior target and current symptoms to inform further treatment'],
+        ["imagery", "Preparation · calming-place imagery", "guided calming-place imagery as part of EMDR preparation"],
+        ["tolerance", "Monitor distress and tolerance", "monitored distress and adjusted EMDR pacing in response to the client’s tolerance"],
+        ["resources", "Identify resources and strengths", "helped identify resources and strengths to support readiness for EMDR work"],
+        ["cognitions", "Identify target-related cognitions", "supported identification of negative cognitions associated with the selected EMDR target"],
+        ["shifts", "Track cognitive and emotional shifts", "invited noticing of changes in thoughts, feelings, and sensations during EMDR processing"],
+        ["stabilize", "Grounding after EMDR sets", "guided grounding and breathing to support stabilization after EMDR sets"],
+        ["integrate", "Integrate adaptive beliefs", "explored how adaptive beliefs emerging in EMDR could be applied to daily functioning"],
+        ["maintenance", "Post-EMDR maintenance planning", "reviewed coping and relapse prevention strategies following EMDR work"]
       ], true),
       modality('mi', 'Motivational Interviewing (MI)', [
         ['oars', 'Open questions, affirmations, reflections, summaries', 'used open questions, affirmations, reflective listening, and summaries to explore motivation'],
@@ -70,7 +94,15 @@
         ['change', 'Elicit change talk', 'elicited the client’s own reasons, ability, and desire for change'],
         ['readiness', 'Readiness and confidence rulers', 'used readiness and confidence scaling to guide collaborative planning'],
         ['balance', 'Decisional balance', 'reviewed perceived benefits and costs of maintaining or changing current behavior'],
-        ['autonomy', 'Autonomy and action planning', 'affirmed autonomy and collaborated on a next step consistent with readiness']
+        ['autonomy', 'Autonomy and action planning', 'affirmed autonomy and collaborated on a next step consistent with readiness'],
+        ["values", "Connect change to personal values", "explored connections between the client’s values and their reasons for considering change"],
+        ["successes", "Review prior successes", "reviewed previous change efforts and strengths to support self-efficacy"],
+        ["affirm", "Affirm strengths and effort", "used affirmations to recognize strengths and effort related to change"],
+        ["discrepancy", "Explore behavior-goal discrepancies", "explored differences between current behavior and the client’s desired outcomes"],
+        ["barriers", "Explore barriers to change", "elicited perceived barriers to change and collaboratively explored possible responses"],
+        ["summary", "Summarize reasons for change", "summarized the client’s stated reasons and intentions for change and checked understanding"],
+        ["supports", "Identify supports for change", "explored available supports that could assist the client’s chosen change efforts"],
+        ["stages", "Stages of change and motivation", "discussed stages of change and fluctuations in motivation while normalizing ambivalence"]
       ], true),
       modality('trauma', 'Trauma-informed therapy', [
         ['grounding', 'Grounding and stabilization', 'practiced grounding and stabilization strategies to address trauma-related activation'],
@@ -78,62 +110,164 @@
         ['window', 'Monitor arousal and pacing', 'monitored arousal and adjusted pacing collaboratively to support tolerable engagement'],
         ['choice', 'Safety, choice, and collaboration', 'supported choice and collaboration in setting session boundaries and priorities'],
         ['compassion', 'Self-compassion and trauma-related beliefs', 'explored trauma-related self-blame and practiced a more compassionate perspective'],
-        ['coping', 'Present-focused coping', 'developed present-focused coping strategies for intrusive experiences and avoidance']
+        ['coping', 'Present-focused coping', 'developed present-focused coping strategies for intrusive experiences and avoidance'],
+        ["emotions", "Identify trauma-related emotions", "supported identification and naming of trauma-related emotions"],
+        ["dissociation", "Grounding for dissociation", "practiced grounding strategies for dissociative experiences"],
+        ["relationships", "Explore trauma and relationship patterns", "explored connections between trauma-related responses and current relationship patterns"],
+        ["triggers", "Identify triggers and coping responses", "identified trauma-related triggers and collaborated on individualized coping responses"],
+        ["resilience", "Identify resilience and resources", "explored resilience factors and existing resources relevant to trauma recovery"],
+        ["thenandnow", "Distinguish past from present", "guided differentiation between past threat and present circumstances"],
+        ["supports", "Identify supportive connections", "explored available supportive connections and ways to access them during distress"],
+        ["survival", "Explore survival strategies", "validated the adaptive origins of survival strategies and explored their current effects on functioning"]
       ], true),
-      modality('ba', 'Behavioral activation', [
+      modality('ba', 'Behavioral Activation Therapy (BAT)', [
         ['schedule', 'Meaningful activity scheduling', 'collaboratively scheduled manageable, meaningful activities'],
         ['barriers', 'Address barriers to activity', 'examined avoidance and problem-solved barriers to activity engagement'],
         ['mood', 'Activity and mood monitoring', 'reviewed links between activity patterns, mood, and functioning'],
-        ['steps', 'Break tasks into steps', 'divided an overwhelming task into achievable steps matched to current capacity']
-      ]),
-      modality('dbt', 'Dialectical Behavior Therapy skills', [
+        ['steps', 'Break tasks into steps', 'divided an overwhelming task into achievable steps matched to current capacity'],
+        ["pleasure", "Schedule a pleasurable activity", "collaboratively identified and scheduled a manageable pleasurable activity"],
+        ["values", "Values-based activity planning", "connected planned activities to the client’s personal values and goals"],
+        ["review", "Review and adjust the activity schedule", "reviewed activity tracking and adjusted the schedule in response to barriers and feedback"],
+        ["education", "Psychoeducation on avoidance and mood", "discussed how avoidance and reduced activity can maintain depressive symptoms"],
+        ["mastery", "Schedule a mastery activity", "identified an achievable mastery-based activity to practice a sense of capability"],
+        ["experiment", "Activity-based behavioral experiment", "planned a behavioral experiment to examine expectations about an avoided activity"],
+        ["menu", "Activity menu for low-motivation days", "developed a menu of feasible activities for periods of low motivation"],
+        ["flexible", "Flexible goals after setbacks", "adjusted activity goals and explored alternatives to all-or-nothing expectations"],
+        ["pacing", "Activity pacing around energy levels", "practiced scheduling activities in manageable intervals matched to current energy"],
+        ["structure", "Weekly structure and tracking", "collaboratively developed a weekly structure chart to support activity planning and review"]
+      ], true),
+      modality('dbt', 'Dialectical Behavior Therapy (DBT)', [
         ['tolerance', 'Distress tolerance', 'taught and rehearsed distress-tolerance skills'],
         ['regulation', 'Emotion regulation', 'practiced identifying emotions and selecting regulation strategies'],
         ['interpersonal', 'Interpersonal effectiveness', 'rehearsed assertive requests and boundary-setting'],
         ['chain', 'Behavior chain analysis', 'examined a behavior chain to identify vulnerabilities and opportunities for skill use'],
-        ['mindfulness', 'Mindfulness skills', 'guided nonjudgmental awareness of present experience']
-      ]),
+        ['mindfulness', 'Mindfulness skills', 'guided nonjudgmental awareness of present experience'],
+        ["diary", "Review diary cards", "reviewed diary-card entries to examine emotions, urges, and use of skills"],
+        ["crisis", "Crisis survival planning", "collaboratively developed a crisis survival plan using relevant DBT skills"],
+        ["opposite", "Opposite action", "taught and rehearsed opposite action for an identified emotion-related urge"],
+        ["tip", "TIP distress-tolerance skills", "taught and rehearsed relevant TIP skills for managing intense arousal"],
+        ["acceptance", "Radical acceptance", "explored radical acceptance in relation to circumstances outside the client’s control"],
+        ["dialectic", "Balance acceptance and change", "explored ways to hold acceptance and change together when considering treatment goals"],
+        ["generalize", "Generalize skills between sessions", "planned how the client could use selected DBT skills outside the session"],
+        ["validation", "Validation and self-validation", "practiced validation and self-validation to support communication and emotional awareness"],
+        ["dearman", "DEAR MAN", "rehearsed DEAR MAN for assertive requests and boundary-setting"],
+        ["fast", "FAST self-respect skills", "practiced FAST skills for maintaining self-respect in interpersonal interactions"],
+        ["urges", "Urge surfing and distraction", "practiced urge surfing and distraction strategies for responding to urges and cravings"]
+      ], true),
       modality('humanistic', 'Humanistic therapy', [
         ['strengths', 'Explore strengths and resources', 'supported recognition of personal strengths and coping resources'],
         ['meaning', 'Meaning and values exploration', 'facilitated exploration of meaning and personal values'],
-        ['self', 'Self-awareness and compassion', 'supported reflective exploration and compassionate self-understanding']
+        ['self', 'Self-awareness and compassion', 'supported reflective exploration and compassionate self-understanding'],
+        ["authentic", "Explore authenticity and values", "supported exploration of the client’s sense of authenticity and personal values"],
+        ["expression", "Nonjudgmental emotional expression", "invited expression of feelings in a nonjudgmental therapeutic space"],
+        ["choices", "Explore choices and responsibility", "explored the client’s choices and sense of agency in current situations"],
+        ["barriers", "Explore barriers to self-acceptance", "explored barriers to self-acceptance and personal growth"],
+        ["experience", "Explore subjective experience", "invited description of the client’s subjective experience and personal meaning"],
+        ["goals", "Values-aligned personal goals", "supported development of personal goals connected to values and purpose"],
+        ["belonging", "Explore connection and belonging", "explored experiences of disconnection and possibilities for meaningful connection"],
+        ["hopes", "Explore hopes and fears", "invited exploration of hopes and fears about the future"],
+        ["relationships", "Relationships and personal growth", "explored how relationship experiences relate to the client’s self-understanding and growth"],
+        ["messages", "Examine internalized negative messages", "supported examination of internalized negative messages and their effects on self-perception"],
+        ["awareness", "Mind-body-emotion awareness", "guided exploration of connections among bodily experience, emotion, and self-awareness"]
       ]),
       modality('ipt', 'Interpersonal therapy', [
         ['patterns', 'Interpersonal patterns', 'examined communication and relationship patterns related to current symptoms'],
         ['transition', 'Role transitions', 'explored adjustment to role transitions and associated emotional responses'],
         ['communication', 'Communication practice', 'rehearsed communication strategies for an identified interpersonal difficulty'],
-        ['support', 'Support and resources', 'reviewed available interpersonal supports and barriers to using them']
+        ['support', 'Support and resources', 'reviewed available interpersonal supports and barriers to using them'],
+        ["grief", "Process interpersonal grief and loss", "supported processing of grief and loss associated with changes in significant relationships"],
+        ["disputes", "Explore interpersonal disputes and mood", "examined connections between unresolved interpersonal disputes and current mood symptoms"],
+        ["expectations", "Explore interpersonal expectations", "explored interpersonal expectations and differences between desired and actual interactions"],
+        ["boundaries", "Practice interpersonal boundaries", "supported development of boundaries relevant to current relationship difficulties"],
+        ["attachment", "Explore attachment and relationships", "explored how attachment-related patterns influence current relationships"],
+        ["withdrawal", "Address social withdrawal", "identified patterns of social withdrawal and considered manageable steps toward connection"],
+        ["empathy", "Perspective-taking and empathy", "practiced considering another perspective to support interpersonal understanding"],
+        ["conflict", "Plan responses to interpersonal conflict", "collaboratively developed a plan for responding to an ongoing interpersonal conflict"],
+        ["loneliness", "Explore loneliness and isolation", "explored loneliness and practical options for reducing isolation"],
+        ["exceptions", "Review effective communication experiences", "reviewed situations in which communication was more effective and identified usable strategies"]
       ]),
       modality('mbct', 'Mindfulness-Based Cognitive Therapy', [
         ['decenter', 'Decentering from thoughts', 'guided noticing thoughts as mental events rather than facts'],
         ['breath', 'Mindful breathing', 'practiced mindful breathing and returning attention to present experience'],
-        ['relapse', 'Recognize symptom patterns', 'explored early warning signs and mindful responses to recurring symptom patterns']
+        ['relapse', 'Recognize symptom patterns', 'explored early warning signs and mindful responses to recurring symptom patterns'],
+        ["meditation", "Present-moment meditation", "guided a mindfulness meditation focused on nonjudgmental awareness of present experience"],
+        ["compassion", "Mindful self-compassion", "guided a mindfulness exercise emphasizing a compassionate response to difficult experiences"],
+        ["links", "Thought-feeling-body connections", "explored connections among thoughts, emotions, and bodily sensations through mindful observation"],
+        ["body", "Body scan meditation", "guided a body scan to practice noticing bodily sensations without judgment"],
+        ["daily", "Plan a daily mindfulness practice", "collaboratively adapted a daily mindfulness practice to the client’s needs and preferences"],
+        ["rumination", "Observe rumination and mood", "used mindful observation to examine the relationship between rumination and mood"],
+        ["autopilot", "Notice automatic pilot", "explored automatic-pilot patterns and practiced intentional attention during a routine activity"],
+        ["stress", "Mindful responses to stress triggers", "identified stress triggers and practiced a mindful pause before responding"],
+        ["acceptance", "Acceptance of difficult emotions", "guided mindful contact with difficult emotions while exploring alternatives to avoidance"],
+        ["barriers", "Explore beliefs about mindfulness", "explored beliefs and barriers affecting engagement with mindfulness practice"],
+        ["pause", "Mindful pause in interpersonal conflict", "rehearsed using mindfulness to create space before responding during interpersonal conflict"]
       ]),
       modality('mbsr', 'Mindfulness-Based Stress Reduction', [
         ['body', 'Body awareness', 'guided awareness of bodily sensations with nonjudgmental attention'],
         ['breath', 'Breathing and stress awareness', 'practiced mindful breathing and noticing stress responses'],
-        ['practice', 'Daily mindfulness planning', 'collaboratively identified a feasible daily mindfulness practice']
+        ['practice', 'Daily mindfulness planning', 'collaboratively identified a feasible daily mindfulness practice'],
+        ["movement", "Mindful movement", "guided mindful movement with attention to bodily sensations and current tolerance"],
+        ["patterns", "Recognize habitual stress responses", "identified habitual stress responses and explored mindful alternatives"],
+        ["review", "Review mindfulness and stress coping", "reviewed the client’s experience of mindfulness practice and its relationship to perceived stress"],
+        ["acceptance", "Acceptance during meditation", "supported nonjudgmental noticing of difficult emotions during meditation practice"],
+        ["arousal", "Monitor physical stress cues", "guided comparison of bodily stress cues before and after a mindfulness exercise"],
+        ["daily", "Mindfulness in daily stressors", "rehearsed applying mindful awareness during a recurring daily stressor"],
+        ["barriers", "Problem-solve practice barriers", "explored barriers to mindfulness practice and collaboratively developed feasible adjustments"],
+        ["eating", "Mindful eating exercise", "guided a mindful eating exercise focused on noticing sensations and internal cues"],
+        ["relationships", "Mindfulness in interactions", "practiced present-moment attention during interpersonal interactions"],
+        ["maintenance", "Mindfulness maintenance planning", "developed a plan for using mindfulness skills in response to future stressors"],
+        ["kindness", "Loving-kindness meditation", "guided a loving-kindness practice to explore a compassionate response to self-criticism"]
       ]),
       modality('narrative', 'Narrative therapy', [
         ['externalize', 'Externalize the problem', 'used externalizing questions to examine the problem’s influence on functioning'],
         ['exceptions', 'Identify exceptions and strengths', 'explored exceptions to problem-focused narratives and identified strengths'],
         ['context', 'Explore social context', 'examined contextual influences on distress without attributing pathology to identity'],
-        ['preferred', 'Develop preferred narratives', 'supported development of a preferred narrative connected to values and treatment goals']
+        ['preferred', 'Develop preferred narratives', 'supported development of a preferred narrative connected to values and treatment goals'],
+        ["documents", "Therapeutic letters and documents", "used a therapeutic writing exercise to develop and reinforce a preferred narrative"],
+        ["influence", "Map the problem’s influence", "mapped the problem’s influence on daily functioning and relationships"],
+        ["meaning", "Reconstruct personal meaning", "supported exploration of alternative meanings connected to a difficult experience"],
+        ["future", "Explore hopes and future intentions", "invited description of preferred future narratives and personal intentions"],
+        ["agency", "Support authorship and agency", "explored the client’s role in shaping preferred directions in their life story"],
+        ["labels", "Externalize internalized negative labels", "used externalizing questions to examine negative labels and reduce identification with the problem"],
+        ["metaphor", "Use metaphor and storytelling", "used the client’s chosen metaphors and storytelling to explore meaning"],
+        ["language", "Examine the influence of language", "explored how language used about a problem affects self-understanding and emotional experience"],
+        ["reauthor", "Re-authoring exercises", "guided re-authoring of self-descriptions in ways connected to values and preferred goals"],
+        ["connections", "Re-membering supportive connections", "explored meaningful connections and values that support a preferred narrative"]
       ]),
-      modality('person', 'Person-centered therapy', [
+      modality('person', 'Person-Centered Therapy', [
         ['empathy', 'Empathic reflection', 'used empathic reflection to support emotional expression and self-understanding'],
         ['regard', 'Unconditional positive regard', 'offered nonjudgmental acceptance to support exploration of current concerns'],
         ['autonomy', 'Client-led exploration', 'supported client-led exploration and autonomous goal setting'],
-        ['reflect', 'Reflect content and feeling', 'reflected content and feeling to support clarification of the client’s experience']
-      ]),
+        ['reflect', 'Reflect content and feeling', 'reflected content and feeling to support clarification of the client’s experience'],
+        ["attunement", "Attune to verbal and nonverbal cues", "attended to verbal and nonverbal cues and checked understanding through empathic responses"],
+        ["vulnerability", "Support expression of vulnerability", "provided an accepting space for exploration of vulnerability"],
+        ["values", "Clarify personal values and goals", "invited the client to articulate personal values and self-directed goals"],
+        ["conflict", "Reflect conflicting emotions", "supported exploration of conflicting emotions through empathic reflection and acceptance"],
+        ["pacing", "Client-led pacing and focus", "followed the client’s lead in setting the pace and focus of exploration"],
+        ["worth", "Explore self-worth and relationships", "invited exploration of self-worth and its relationship to current interpersonal experiences"],
+        ["trust", "Support self-trust", "offered empathic feedback to support exploration of the client’s own judgment and choices"],
+        ["selfconcept", "Explore self-concept and expectations", "supported exploration of self-concept in relation to external expectations"],
+        ["compassion", "Explore barriers to self-acceptance", "invited exploration of barriers to self-acceptance and compassionate self-regard"],
+        ["encouragers", "Minimal encouragers and open questions", "used minimal encouragers and open questions to support client-led elaboration and self-discovery"]
+      ], true),
       modality('sfbt', 'Solution-Focused Brief Therapy', [
         ['scaling', 'Scaling questions', 'used scaling questions to assess perceived progress and confidence'],
         ['exceptions', 'Exception finding', 'explored times when symptoms were less disruptive and identified helpful conditions'],
         ['future', 'Preferred future', 'elicited a preferred future to clarify meaningful treatment goals'],
-        ['steps', 'Small achievable steps', 'collaborated on small, feasible steps drawing on existing strengths']
+        ['steps', 'Small achievable steps', 'collaborated on small, feasible steps drawing on existing strengths'],
+        ["successes", "Review past successes", "explored previous successes and coping strategies relevant to the current concern"],
+        ["miracle", "Miracle question", "used the miracle question to clarify concrete signs of a preferred future"],
+        ["supports", "Identify existing supports", "identified existing supports and resources that could assist the client’s next steps"],
+        ["specific", "Clarify specific short-term goals", "collaboratively clarified specific and realistic short-term therapy goals"],
+        ["language", "Use the client’s language and metaphors", "used the client’s own language and metaphors to describe possible solutions"],
+        ["actionplan", "Action plan with timeframe", "collaboratively developed an action plan with achievable steps and an agreed timeframe"],
+        ["barriers", "Problem-solve barriers to change", "identified possible barriers to a proposed step and explored ways to address them"],
+        ["coping", "Explore existing coping", "explored how the client has managed current difficulties and which strategies could be used again"],
+        ["solutions", "Generate feasible solutions", "supported generation of possible solutions and consideration of their feasibility"],
+        ["monitor", "Plan how to notice useful changes", "collaboratively identified how to notice helpful changes and adapt next steps"]
       ])
     ],
-    symptoms: ['anxiety or excessive worry', 'low mood', 'rumination', 'intrusive memories', 'hyperarousal', 'avoidance', 'emotional dysregulation', 'sleep disturbance', 'difficulty concentrating', 'dissociative experiences', 'irritability', 'reduced motivation', 'fatigue', 'interpersonal distress'],
+    symptoms: ["anxiety or excessive worry", "low mood", "anhedonia", "rumination", "intrusive memories", "hyperarousal", "avoidance", "emotional dysregulation", "sleep disturbance", "insomnia", "hypersomnia", "decreased need for sleep", "difficulty concentrating", "indecisiveness", "dissociative experiences", "irritability", "reduced motivation", "fatigue", "increased appetite", "decreased appetite", "psychomotor agitation", "psychomotor retardation", "hopelessness", "feelings of worthlessness or excessive guilt", "suicidal ideation", "muscle tension", "panic symptoms", "nightmares", "social withdrawal", "substance use", "substance cravings", "mania", "hypomania", "elevated or expansive mood", "grandiosity", "pressured speech", "flight of ideas", "racing thoughts", "risk-taking behavior", "impulsivity", "compulsive behaviors", "interpersonal distress"],
     functions: ['daily routines', 'self-care', 'sleep and rest', 'attention and task completion', 'relationships and communication', 'work or educational functioning', 'participation in valued activities', 'emotion regulation'],
     goals: ['increase use of coping skills', 'reduce anxiety-related interference', 'improve mood and engagement in daily activities', 'increase tolerance of trauma-related distress', 'improve emotional regulation', 'strengthen communication and boundaries', 'increase psychological flexibility', 'support adjustment to current stressors', 'maintain treatment gains'],
     responses: [
@@ -144,14 +278,6 @@
       option('limited', 'Limited observable response', 'showed limited observable response to the intervention during this session'),
       option('distress', 'Distress increased · intervention adjusted', 'experienced increased distress, and the counselor adjusted pacing and intervention'),
       option('declined', 'Declined the proposed intervention', 'declined the proposed intervention after discussion of available options')
-    ],
-    progress: [
-      option('met', 'Goal met', 'The client met the treatment-plan goal addressed in this session'),
-      option('moderate', 'Moderate Progress', 'The client demonstrated moderate progress toward this goal'),
-      option('maintained', 'Maintained prior gains', 'The client maintained previously established gains related to this goal'),
-      option('unchanged', 'No meaningful change', 'There was no meaningful change toward this goal during the interval assessed'),
-      option('worsened', 'Increased difficulty', 'The client experienced increased difficulty related to this goal'),
-      option('early', 'Early treatment · baseline being established', 'A baseline related to this goal is being established')
     ],
     participation: [
       option('active', 'Expressed concerns and engaged with questions', 'The client participated by expressing current concerns and engaging with the counselor’s questions and reflections.'),
@@ -183,8 +309,8 @@
   const sentence = value => clean(value).replace(/[.!?]+$/, '') + '.';
   const list = values => values.length < 2 ? (values[0] || '') : values.length === 2 ? values.join(' and ') : values.slice(0, -1).join(', ') + ', and ' + values.at(-1);
   const find = (items, id) => items.find(x => x.id === id);
-  function blankGoal() { return { goal: '', customGoal: '', modality: '', interventions: [], customIntervention: '', response: '', evidence: '', progress: '', progressEvidence: '', emdrDetails: '' }; }
-  function initial() { return { symptoms: [], customSymptoms: '', source: '', severity: '', frequency: '', trend: '', functions: [], functionalDetail: '', necessity: '', goals: [blankGoal()], participation: '', takeaways: [], customTakeaway: '', homework: [], homeworkStatus: '', homeworkDetail: '', homeworkSchedule: '', followups: [], customFollowup: '', frequencyPlan: '', reviewed: false, manualOverride: false }; }
+  function blankGoal() { return { goal: '', customGoal: '', modality: '', interventions: [], customIntervention: '', response: '', evidence: '', emdrDetails: '' }; }
+  function initial() { return { symptoms: [], customSymptoms: '', source: '', severity: '', frequency: '', trend: '', functions: [], functionalDetail: '', goals: [blankGoal()], participation: '', takeaways: [], customTakeaway: '', homework: [], homeworkStatus: '', homeworkDetail: '', homeworkSchedule: '', followups: [], customFollowup: '', frequencyPlan: '', reviewed: false, manualOverride: false }; }
   const goalText = g => g.goal === 'custom' ? clean(g.customGoal) : clean(g.goal);
   function validate(d) {
     const errors = [];
@@ -192,7 +318,6 @@
     if (!d.symptoms.length && !clean(d.customSymptoms)) add(0, 'symptoms', 'Select symptoms or enter an accurate symptom assessment.');
     for (const [key, label] of [['source','assessment source'], ['severity','symptom severity'], ['frequency','symptom frequency'], ['trend','change in symptoms']]) if (!d[key]) add(0, key, 'Select ' + label + '.');
     if (!d.functions.length && !clean(d.functionalDetail)) add(0, 'functions', 'Document current functional impact, or explain functioning in the detail field.');
-    if (!clean(d.necessity)) add(0, 'necessity', 'Document the clinical reason for the current treatment plan.');
     d.goals.forEach((g, i) => {
       const n = 'Goal ' + (i + 1) + ': ';
       if (!goalText(g)) add(1, 'goals', n + 'select or enter a treatment-plan goal.');
@@ -201,8 +326,6 @@
       if (!(m && g.interventions.some(id => find(m.items, id))) && !clean(g.customIntervention)) add(1, 'goals', n + 'select an intervention actually used.');
       if (!find(C.responses, g.response)) add(1, 'goals', n + 'select the client’s response.');
       if (!clean(g.evidence)) add(1, 'goals', n + 'add a brief, observable example of their response.');
-      if (!find(C.progress, g.progress)) add(1, 'goals', n + 'select progress toward this goal.');
-      if (!clean(g.progressEvidence)) add(1, 'goals', n + 'briefly support the progress assessment.');
       if (g.modality === 'emdr' && !clean(g.emdrDetails)) add(1, 'goals', n + 'document phase-specific findings and closure/stability as applicable.');
     });
     if (!find(C.participation, d.participation)) add(2, 'participation', 'Select observed participation.');
@@ -217,8 +340,6 @@
   }
   function assemble(d) {
     const paragraphs = [];
-    const descriptions = d.goals.map(g => find(C.modalities, g.modality)?.label).filter(Boolean);
-    if (descriptions.length) paragraphs.push('The counselor used ' + sentence(list([...new Set(descriptions)])));
     const sx = [...d.symptoms, clean(d.customSymptoms)].filter(Boolean);
     const symptomParts = [];
     if (sx.length) {
@@ -230,7 +351,6 @@
     if (d.trend) symptomParts.push('Compared with the prior assessment, symptoms were ' + d.trend + '.');
     if (symptomParts.length) paragraphs.push(symptomParts.join(' '));
     if (d.functions.length || clean(d.functionalDetail)) paragraphs.push((d.functions.length ? 'Symptoms affected ' + list(d.functions) + '.' : '') + (clean(d.functionalDetail) ? ' ' + sentence(d.functionalDetail) : ''));
-    if (clean(d.necessity)) paragraphs.push('Clinical rationale for the current treatment plan: ' + sentence(d.necessity));
     d.goals.forEach(g => {
       const m = find(C.modalities, g.modality);
       const actions = m ? g.interventions.map(id => find(m.items, id)?.text).filter(Boolean) : [];
@@ -241,9 +361,6 @@
       const response = find(C.responses, g.response);
       if (response) pieces.push('The client ' + sentence(response.text) + (clean(g.evidence) ? ' Evidence: ' + sentence(g.evidence) : ''));
       else if (clean(g.evidence)) pieces.push('Client response observations: ' + sentence(g.evidence));
-      const progress = find(C.progress, g.progress);
-      if (progress) pieces.push(sentence(progress.text) + (clean(g.progressEvidence) ? ' ' + sentence(g.progressEvidence) : ''));
-      else if (clean(g.progressEvidence)) pieces.push('Progress assessment: ' + sentence(g.progressEvidence));
       if (pieces.length) paragraphs.push(pieces.join(' '));
     });
     const participation = find(C.participation, d.participation);
@@ -259,7 +376,7 @@
     const followups = [...d.followups, clean(d.customFollowup)].filter(Boolean);
     if (followups.length) paragraphs.push('The counselor will follow up with the client regarding ' + sentence(list(followups)) + (clean(d.frequencyPlan) ? ' Follow-up plan: ' + sentence(d.frequencyPlan) : ''));
     else if (clean(d.frequencyPlan)) paragraphs.push('Follow-up plan: ' + sentence(d.frequencyPlan));
-    return paragraphs.join('\n\n');
+    return paragraphs.map(clean).filter(Boolean).join(' ');
   }
   function snippetRange(value) {
     const starts = ['The counselor used', 'The client responded', 'The client participated', 'The client stated that their takeaway', 'Between sessions, the client will practice/review', 'The counselor will follow up'];
@@ -279,7 +396,7 @@
       if (!range) throw new Error('The General snippet could not be identified safely. Choose append or paste manually.');
       return original.slice(0, range.start) + narrative + original.slice(range.end);
     }
-    return original.trimEnd() + (original.trim() ? '\n\n' : '') + narrative;
+    return original.trimEnd() + (original.trim() ? ' ' : '') + narrative;
   }
   function canComplete(d) { return Boolean(d.reviewed && (d.manualOverride || !validate(d).length) && assemble(d).trim()); }
   modules.MollyCore = { initial, blankGoal, validate, assemble, snippetRange, merge, clean, canComplete };
@@ -431,7 +548,7 @@
       form.append(checks(data, 'symptoms', 'Symptoms assessed', C.symptoms), textField(data, 'customSymptoms', 'Other symptoms or assessment detail', 'For minimal or absent symptoms, describe the current assessment accurately. Include measure findings here if used.', true));
       form.append(selectField(data, 'source', 'Assessment source', [{ id: 'report', label: 'Client report' }, { id: 'observation', label: 'Counselor observation' }, { id: 'both', label: 'Client report and observation' }, { id: 'measure', label: 'Symptom measure and clinical assessment' }]));
       const row = el('div', { class: 'row' }); row.append(selectField(data, 'severity', 'Current severity', ['minimal or absent', 'mild', 'moderate', 'severe', 'variable']), selectField(data, 'frequency', 'Frequency', ['intermittent', 'several days during the assessed interval', 'most days during the assessed interval', 'daily', 'not currently present', 'variable during the assessed interval']));
-      form.append(row, selectField(data, 'trend', 'Change since prior assessment', ['improved', 'unchanged', 'worsened', 'mixed across symptom areas', 'not comparable; this is an initial assessment']), checks(data, 'functions', 'Areas of functional impact', C.functions), textField(data, 'functionalDetail', 'Functional detail or preserved functioning', 'Briefly describe how symptoms affect an activity or ability, without unnecessary personal context.', true), textField(data, 'necessity', 'Clinical rationale for the current treatment plan', 'Connect assessed symptoms or relapse risk, functional needs, and the skilled care provided. Document discharge or change in plan when appropriate.', true));
+      form.append(row, selectField(data, 'trend', 'Change since prior assessment', ['improved', 'unchanged', 'worsened', 'mixed across symptom areas', 'not comparable; this is an initial assessment']), checks(data, 'functions', 'Areas of functional impact', C.functions), textField(data, 'functionalDetail', 'Functional detail or preserved functioning', 'Briefly describe how symptoms affect an activity or ability, without unnecessary personal context.', true));
     }
     function goals() {
       titleSection('Connect goals to clinical actions', 'Add one entry for each treatment-plan goal addressed. Select only interventions actually used.');
@@ -448,7 +565,7 @@
         const modality = C.modalities.find(m => m.id === g.modality);
         if (modality) section.append(checks(g, 'interventions', 'Interventions used', modality.items, true), textField(g, 'customIntervention', 'Additional or individualized intervention', 'Complete the phrase “the counselor…” with an action actually performed.', true));
         if (g.modality === 'emdr') section.append(textField(g, 'emdrDetails', 'EMDR phase-specific findings', 'Record relevant assessment or response (for example SUD/VOC if used), target status, tolerance, and closure/stability as applicable. The trauma narrative is not required here.', true));
-        section.append(selectField(g, 'response', 'Client response to these interventions', C.responses), textField(g, 'evidence', 'Brief evidence of their response', 'For example: identified a thought pattern and rehearsed an alternative. Describe observed or reported evidence, not assumed improvement.', true), selectField(g, 'progress', 'Progress toward this goal', C.progress), textField(g, 'progressEvidence', 'Basis for the progress assessment', 'Connect a specific change, maintained ability, barrier, or baseline to this goal.', true)); form.append(section);
+        section.append(selectField(g, 'response', 'Client response to these interventions', C.responses), textField(g, 'evidence', 'Brief evidence of their response', 'For example: identified a thought pattern and rehearsed an alternative. Describe observed or reported evidence, not assumed improvement.', true)); form.append(section);
       });
       if (data.goals.length < 6) form.append(el('button', { class: 'secondary', type: 'button', onclick: () => { data.goals.push(Core.blankGoal()); touch(); render(); } }, '+ Add another goal / modality'));
     }
@@ -490,7 +607,7 @@
       if (step === 3 && errorsBox) {
         errorsBox.replaceChildren();
         if (errors.length) { const box = el('details', { class: 'error' }); box.open = !data.manualOverride; box.append(el('summary', {}, data.manualOverride ? 'Blank fields left by choice (' + errors.length + ')' : 'Complete these items or use Manual Override')); const ul = el('ul'); errors.forEach(e => { const li = el('li'), b = el('button', { type: 'button', class: 'textbutton', onclick: () => go(e.step) }, e.message); li.append(b); ul.append(li); }); box.append(ul); errorsBox.append(box); }
-        else errorsBox.append(el('p', { class: 'complete' }, 'Symptoms, goals, interventions, response, progress, and plan are complete.'));
+        else errorsBox.append(el('p', { class: 'complete' }, 'Symptoms, goals, interventions, response, and plan are complete.'));
       }
       if (copyButton) copyButton.disabled = !Core.canComplete(data);
       if (insertButton) insertButton.disabled = !Core.canComplete(data);
@@ -736,7 +853,7 @@
 // ---- end modules ----
 function start() {
   if (!document.body || document.documentElement.hasAttribute('data-molly-userscript-version')) return;
-  document.documentElement.setAttribute('data-molly-userscript-version', '1.3.0');
+  document.documentElement.setAttribute('data-molly-userscript-version', '1.4.0');
   const A = modules.MollyAdapter, UI = modules.MollyUI, Celebration = modules.MollyCelebration;
   let current = null, lastField = null, path = location.pathname + location.search + location.hash, queued = false;
   const buttons = new Map();
